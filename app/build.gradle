@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'org.graalvm.buildtools.native' version '0.9.22'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+}
+
+application {
+    mainClass = 'cn.geekcity.xiot.graalvm.example.helloworld.HelloWorld'
+}
+
+shadowJar {
+    archiveClassifier = 'fat'
+    manifest {
+        attributes 'Main-Class': 'cn.geekcity.xiot.graalvm.example.helloworld.HelloWorld'
+    }
+}
+
+graalvmNative {
+    binaries.all {
+        resources.autodetect()
+    }
+    toolchainDetection = false
+
+    binaries {
+        main {
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(11)
+                vendor = JvmVendorSpec.matching("GraalVM Community")
+            }
+        }
+    }
+}
